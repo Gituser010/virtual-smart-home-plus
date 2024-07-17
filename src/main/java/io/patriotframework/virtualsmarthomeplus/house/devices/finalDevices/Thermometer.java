@@ -7,17 +7,27 @@ import io.patriotframework.virtualsmarthomeplus.DTOs.ThermometerDTO;
 import io.patriotframework.virtualsmarthomeplus.house.House;
 import io.patriotframework.virtualsmarthomeplus.house.devices.Device;
 import io.patriotframework.virtualsmarthomeplus.house.devices.Sensor;
+import io.patriot_framework.generator.device.impl.basicSensors.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Representation of thermometer device.
+ */
 public class Thermometer extends Sensor {
 
+    /**
+     * Measuring unit of the thermometer.
+     */
     public static final String CELSIUS = "C";
+    /**
+     * Measuring unit of the thermometer.
+     */
     public static final String FAHRENHEIT = "F";
     //public static final String KELVIN = "K";     private  Float temperature;
     public static final String DEFAULT_UNIT = CELSIUS;
     private static final Logger LOGGER = LoggerFactory.getLogger(House.class);
-    private final io.patriot_framework.generator.device.Device device;
+    private static final io.patriot_framework.generator.device.impl.basicSensors.Thermometer thermometer = new io.patriot_framework.generator.device.impl.basicSensors.Thermometer("", new NormalDistVariateDataFeed(25, 1));
     private String unit;
 
     /**
@@ -40,10 +50,6 @@ public class Thermometer extends Sensor {
     @JsonCreator
     public Thermometer(String label, String unit) {
         super(label);
-        device = new io.patriot_framework.generator.device.impl.basicSensors.Thermometer(
-                getLabel(),
-                new NormalDistVariateDataFeed(25, 1)
-        );
         this.unit = unit;
     }
 
@@ -81,7 +87,7 @@ public class Thermometer extends Sensor {
      * @return temperature value
      */
     public Float getTemperature() {
-        return device.requestData().get(0).get(Double.class).floatValue();
+        return thermometer.requestData().get(0).get(Double.class).floatValue();
     }
 
     /**

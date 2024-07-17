@@ -6,7 +6,7 @@ import io.patriotframework.virtualsmarthomeplus.house.House;
 import io.patriotframework.virtualsmarthomeplus.house.devices.DeviceMock;
 import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.Door;
 import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.Fireplace;
-import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.RGBLight;
+import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.Light;
 import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.Thermometer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
@@ -53,30 +53,27 @@ public class DTOMapperTest {
         assertEquals(dtoMapper.map(thermometer),thermometerDTO);
     }
 
+
+
     @Test
-    public void rgbToRgbDTO(){
-        RGBLight rgbLight = new RGBLight("rgb1");
-        rgbLight.setEnabled(true);
-        rgbLight.switchOn();
-        rgbLight.setRed(20);
-        rgbLight.setGreen(21);
-        rgbLight.setBlue(22);
+    public void lightToLightDTO() {
+        Light light = new Light("light1");
+        light.setEnabled(true);
+        light.turnOn();
 
-        RGBLightDTO rgbLightDTO = new RGBLightDTO();
-        rgbLightDTO.setLabel("rgb1");
-        rgbLightDTO.setEnabled(true);
-        rgbLightDTO.setSwitchedOn(true);
-        rgbLightDTO.setRed(20);
-        rgbLightDTO.setGreen(21);
-        rgbLightDTO.setBlue(22);
+        LightDTO lightDTO = new LightDTO();
+        lightDTO.setEnabled(true);
+        lightDTO.setStatus(Light.ON);
+        lightDTO.setLabel("light1");
 
-        assertEquals(dtoMapper.map(rgbLight),rgbLightDTO);
+        assertEquals(dtoMapper.map(light), lightDTO);
 
-        rgbLight.switchOf();
-        rgbLightDTO.setSwitchedOn(false);
+        light.turnOff();
+        lightDTO.setStatus(Light.OFF);
 
-        assertEquals(dtoMapper.map(rgbLight),rgbLightDTO);
+        assertEquals(dtoMapper.map(light), lightDTO);
     }
+
 
     @Test
     public void fireplaceToFireplaceDTO() {
@@ -118,7 +115,7 @@ public class DTOMapperTest {
 
     @Test
     public void classDTOToClass() {
-        assertEquals(RGBLight.class,dtoMapper.mapDtoClassType(RGBLightDTO.class));
+        assertEquals(Light.class,dtoMapper.mapDtoClassType(LightDTO.class));
         assertEquals(Door.class,dtoMapper.mapDtoClassType(DoorDTO.class));
         assertEquals(Fireplace.class,dtoMapper.mapDtoClassType(FireplaceDTO.class));
         assertEquals(Thermometer.class,dtoMapper.mapDtoClassType(ThermometerDTO.class));
@@ -128,7 +125,7 @@ public class DTOMapperTest {
 
     @Test
     public void classToClassDTO() {
-        assertEquals(RGBLightDTO.class,dtoMapper.mapDeviceClassType(RGBLight.class));
+        assertEquals(LightDTO.class,dtoMapper.mapDeviceClassType(Light.class));
         assertEquals(DoorDTO.class,dtoMapper.mapDeviceClassType(Door.class));
         assertEquals(FireplaceDTO.class,dtoMapper.mapDeviceClassType(Fireplace.class));
         assertEquals(ThermometerDTO.class,dtoMapper.mapDeviceClassType(Thermometer.class));
@@ -140,13 +137,13 @@ public class DTOMapperTest {
     @Test
     public void houseToHouseDTO() {
         House house = new House();
-        RGBLight rgbLight = new RGBLight("rgb1");
-        house.addDevice(rgbLight);
+        Light light = new Light("light1");
+        house.addDevice(light);
 
         HouseDTO houseDTO = new HouseDTO();
         List<DeviceDTO> list = new ArrayList<>();
         houseDTO.setDevices(list);
-        list.add(dtoMapper.map(rgbLight));
+        list.add(dtoMapper.map(light));
         houseDTO.setDevices(list);
 
         HouseDTO houseDTO1 = dtoMapper.map(house);

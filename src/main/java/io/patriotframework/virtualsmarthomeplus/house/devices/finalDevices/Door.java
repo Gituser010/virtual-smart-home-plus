@@ -2,6 +2,8 @@ package io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import io.patriot_framework.generator.device.impl.basicActuators.BasicActuator;
+import io.patriot_framework.generator.device.passive.actuators.stateMachine.StateMachine;
 import io.patriotframework.virtualsmarthomeplus.DTOs.DeviceDTO;
 import io.patriotframework.virtualsmarthomeplus.DTOs.DoorDTO;
 import io.patriotframework.virtualsmarthomeplus.house.House;
@@ -19,8 +21,8 @@ public class Door extends Device {
     public static final String OPENED = "opened";
     public static final String CLOSED = "closed";
     private static final Logger LOGGER = LoggerFactory.getLogger(House.class);
-    private boolean opened = false;
 
+    private final BasicActuator door = new BasicActuator("door");
     /**
      * Creates new door with given label.
      *
@@ -29,6 +31,12 @@ public class Door extends Device {
     @JsonCreator
     public Door(String label) {
         super(label);
+        door.setStateMachine(new StateMachine.Builder()
+                .from(OPENED)
+                    .to(CLOSED, "close")
+                .from(CLOSED)
+                    .to(OPENED, "open")
+                .build());
     }
 
     /**
@@ -41,27 +49,26 @@ public class Door extends Device {
      */
     public Door(Door origDoor, String newLabel) {
         super(origDoor, newLabel);
-        opened = origDoor.opened;
+        door.setStateMachine(new StateMachine.Builder()
+                .from(OPENED)
+                    .to(CLOSED, "close")
+                .from(CLOSED)
+                    .to(OPENED, "open")
+                .build());
     }
 
     /**
      * Opens the door.
      */
     public void open() {
-        if (!opened) {
-            opened = true;
-            LOGGER.debug(String.format("Door %s opened", getLabel()));
-        }
+        door.controlSignal("open");
     }
 
     /**
      * Closes the door.
      */
     public void close() {
-        if (opened) {
-            opened = false;
-            LOGGER.debug(String.format("Door %s closed", getLabel()));
-        }
+        door.controlSignal("close");
     }
 
     /**
@@ -70,7 +77,7 @@ public class Door extends Device {
      * @return {@link #OPENED} if the door is opened, {@link #CLOSED} otherwise
      */
     public String getStatus() {
-        return opened ? OPENED : CLOSED;
+        return door.requestData().get(0).get(String.class);
     }
 
     /**
@@ -98,7 +105,7 @@ public class Door extends Device {
         if (isEnabled() != typedDoor.isEnabled()) {
             return false;
         }
-        return typedDoor.opened == opened;
+        return getStatus().equals(typedDoor.getStatus());
     }
     /**
      * Updates the door object with the values from provided DTO.
@@ -109,9 +116,11 @@ public class Door extends Device {
         final DoorDTO doorDTO = (DoorDTO) deviceDTO;
         if (doorDTO.getStatus() != null) {
             if (doorDTO.getStatus().equals(OPENED)) {
-                this.open();
+                if(getStatus().equals(CLOSED))
+                    this.open();
             } else if (doorDTO.getStatus().equals(CLOSED)) {
-                this.close();
+                if (getStatus().equals(OPENED))
+                    this.close();
             }
         }
         super.update(doorDTO);

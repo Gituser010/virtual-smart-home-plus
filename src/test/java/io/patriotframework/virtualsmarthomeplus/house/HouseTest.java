@@ -1,8 +1,7 @@
 package io.patriotframework.virtualsmarthomeplus.house;
 
-import io.patriotframework.virtualsmarthomeplus.DTOs.RGBLightDTO;
 import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.Door;
-import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.RGBLight;
+import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.Light;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class HouseTest {
     private final Door door1 = new Door("HouseDoor1");
     private final Door door2 = new Door("HouseDoor2");
-    private final RGBLight rgbLight = new RGBLight("HouseRGB");
+    private final Light light = new Light("HouseRGB");
     private final House house = new House();
 
     @Test
@@ -36,21 +35,21 @@ public class HouseTest {
     @Test
     @Order(3)
     public void getDevicesOfType() {
-        house.addDevice(rgbLight);
+        house.addDevice(light);
         house.addDevice(door2);
         house.addDevice(door1);
         assertEquals(house.getDevicesOfType(Door.class).size(),2);
-        assertEquals(house.getDevicesOfType(RGBLight.class).size(),1);
+        assertEquals(house.getDevicesOfType(Light.class).size(),1);
     }
 
     @Test
     @Order(4)
     public void getDeviceOfType() {
-        house.addDevice(rgbLight);
+        house.addDevice(light);
         house.addDevice(door2);
         house.addDevice(door1);
         assertEquals(house.getDeviceOfType(Door.class,"HouseDoor1"),door1);
-        assertEquals(house.getDeviceOfType(RGBLight.class,"HouseRGB"),rgbLight);
+        assertEquals(house.getDeviceOfType(Light.class,"HouseRGB"),light);
         assertNull(house.getDeviceOfType(Door.class, "HouseRGB"));
     }
 

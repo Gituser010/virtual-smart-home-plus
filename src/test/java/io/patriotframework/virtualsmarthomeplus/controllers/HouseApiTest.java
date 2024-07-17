@@ -6,7 +6,7 @@ import io.patriotframework.virtualsmarthomeplus.DTOs.HouseDTO;
 import io.patriotframework.virtualsmarthomeplus.Mapper.DTOMapper;
 import io.patriotframework.virtualsmarthomeplus.VirtualSmartHomePlusApplication;
 import io.patriotframework.virtualsmarthomeplus.house.House;
-import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.RGBLight;
+import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.Light;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -44,7 +44,7 @@ public class HouseApiTest {
     @Order(1)
     public void shouldFetchHouse() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
-        this.house.addDevice(new RGBLight("rg1"));
+        this.house.addDevice(new Light("rg1"));
         HouseDTO houseDTO = dtoMapper.map(house);
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v0.1/house/")
                         .accept(MediaType.APPLICATION_JSON))

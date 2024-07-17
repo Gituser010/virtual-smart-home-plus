@@ -4,7 +4,7 @@ import io.patriotframework.virtualsmarthomeplus.DTOs.DeviceDTO;
 import io.patriotframework.virtualsmarthomeplus.house.devices.Device;
 import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.Door;
 import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.Fireplace;
-import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.RGBLight;
+import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.Light;
 import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.Thermometer;
 
 /**
@@ -23,7 +23,7 @@ public class DeviceFactory {
     public Device createDevice( DeviceDTO device) throws IllegalArgumentException {
         final String deviceType = device.getClass().getSimpleName();
         return switch (deviceType) {
-            case "RGBLightDTO" -> new RGBLight(device.getLabel());
+            case "LightDTO" -> new Light(device.getLabel());
             case "ThermometerDTO" -> new Thermometer(device.getLabel());
             case "FireplaceDTO" -> new Fireplace(device.getLabel());
             case "DoorDTO" -> new Door(device.getLabel());

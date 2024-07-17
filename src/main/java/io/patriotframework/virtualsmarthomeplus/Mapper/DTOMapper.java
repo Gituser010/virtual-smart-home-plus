@@ -1,16 +1,11 @@
 package io.patriotframework.virtualsmarthomeplus.Mapper;
 
-import io.patriotframework.virtualsmarthomeplus.DTOs.ThermometerDTO;
-import io.patriotframework.virtualsmarthomeplus.DTOs.HouseDTO;
-import io.patriotframework.virtualsmarthomeplus.DTOs.RGBLightDTO;
-import io.patriotframework.virtualsmarthomeplus.DTOs.DeviceDTO;
-import io.patriotframework.virtualsmarthomeplus.DTOs.DoorDTO;
-import io.patriotframework.virtualsmarthomeplus.DTOs.FireplaceDTO;
+import io.patriotframework.virtualsmarthomeplus.DTOs.*;
 import io.patriotframework.virtualsmarthomeplus.house.House;
 import io.patriotframework.virtualsmarthomeplus.house.devices.Device;
 import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.Door;
 import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.Fireplace;
-import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.RGBLight;
+import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.Light;
 import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.Thermometer;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
@@ -33,7 +28,7 @@ public class DTOMapper {
         CLASS_TO_DTO.put(Fireplace.class, FireplaceDTO.class);
         CLASS_TO_DTO.put(Door.class, DoorDTO.class);
         CLASS_TO_DTO.put(Thermometer.class, ThermometerDTO.class);
-        CLASS_TO_DTO.put(RGBLight.class, RGBLightDTO.class);
+        CLASS_TO_DTO.put(Light.class, LightDTO.class);
     }
 
     static {
@@ -42,7 +37,7 @@ public class DTOMapper {
         DTO_TO_CLASS.put(FireplaceDTO.class, Fireplace.class);
         DTO_TO_CLASS.put(DoorDTO.class, Door.class);
         DTO_TO_CLASS.put(ThermometerDTO.class, Thermometer.class);
-        DTO_TO_CLASS.put(RGBLightDTO.class, RGBLight.class);
+        DTO_TO_CLASS.put(LightDTO.class, Light.class);
 
     }
 
@@ -69,13 +64,13 @@ public class DTOMapper {
             return new Door(doorDTO.getLabel());
         });
 
-        final TypeMap<RGBLightDTO, RGBLight> rgbLightTypeMap = this.modelMapper.createTypeMap(
-                RGBLightDTO.class,
-                RGBLight.class
+        final TypeMap<LightDTO, Light> LightTypeMap = this.modelMapper.createTypeMap(
+                LightDTO.class,
+                Light.class
         );
-        rgbLightTypeMap.setProvider(request -> {
-            final RGBLightDTO rgbLightDTO = (RGBLightDTO) request.getSource();
-            return new RGBLight(rgbLightDTO.getLabel());
+        LightTypeMap.setProvider(request -> {
+            final LightDTO LightDTO = (LightDTO) request.getSource();
+            return new Light(LightDTO.getLabel());
         });
 
         final TypeMap<ThermometerDTO, Thermometer> thermometerTypeMap = this.modelMapper.createTypeMap(

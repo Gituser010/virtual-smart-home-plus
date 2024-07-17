@@ -3,9 +3,9 @@ package io.patriotframework.virtualsmarthomeplus.controllers;
 import io.patriotframework.virtualsmarthomeplus.APIRoutes;
 import io.patriotframework.virtualsmarthomeplus.APIVersions;
 import io.patriotframework.virtualsmarthomeplus.DTOs.DeviceDTO;
-import io.patriotframework.virtualsmarthomeplus.DTOs.RGBLightDTO;
+import io.patriotframework.virtualsmarthomeplus.DTOs.LightDTO;
 import io.patriotframework.virtualsmarthomeplus.house.House;
-import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.RGBLight;
+import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.Light;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,22 +22,22 @@ import javax.validation.constraints.NotNull;
 
 
 @RestController
-public class RGBLightController extends FinalDeviceHandling {
-    private static final String RGB_LIGHT_ID_ROUTE = APIRoutes.RGB_LIGHT_ROUTE + "/{label}";
+public class LightController extends FinalDeviceHandling {
+    private static final String LIGHT_ID_ROUTE = APIRoutes.LIGHT_ROUTE + "/{label}";
 
-    RGBLightController(House house) {
+    LightController(House house) {
         super(house);
     }
 
     /**
-     * Creates the RGBLight
+     * Creates the Light
      *
-     * @param device     new RGBLight DTO
+     * @param device     new Light DTO
      * @param apiVersion api version specified in route
-     * @return RGBLight added to the house
+     * @return Light added to the house
      */
-    @PostMapping(APIRoutes.RGB_LIGHT_ROUTE)
-    public ResponseEntity<DeviceDTO> postLed(@Valid @RequestBody RGBLightDTO device, @PathVariable String apiVersion) {
+    @PostMapping(APIRoutes.LIGHT_ROUTE)
+    public ResponseEntity<DeviceDTO> postLed(@Valid @RequestBody LightDTO device, @PathVariable String apiVersion) {
         if (apiVersion.equals(APIVersions.V0_1)) {
             return new ResponseEntity<>(handlePost(device), HttpStatus.OK);
         }
@@ -47,16 +47,16 @@ public class RGBLightController extends FinalDeviceHandling {
     }
 
     /**
-     * Returns the RGBLight
+     * Returns the Light
      *
      * @param label      label specified in route
      * @param apiVersion api version specified in route
-     * @return RGBlight if present in the house
+     * @return light if present in the house
      */
-    @GetMapping(RGB_LIGHT_ID_ROUTE)
+    @GetMapping(LIGHT_ID_ROUTE)
     public ResponseEntity<DeviceDTO> getLed(@PathVariable @NotNull String label, @PathVariable String apiVersion) {
         if (apiVersion.equals(APIVersions.V0_1)) {
-            return new ResponseEntity<>(handleGet(label, RGBLight.class), HttpStatus.OK);
+            return new ResponseEntity<>(handleGet(label, Light.class), HttpStatus.OK);
         }
         throw new ResponseStatusException(
                 HttpStatus.NOT_FOUND, String.format("Unknown api version: %s", apiVersion) // 404
@@ -64,16 +64,16 @@ public class RGBLightController extends FinalDeviceHandling {
     }
 
     /**
-     * Updates or creates the RGBLight
+     * Updates or creates the Light
      *
-     * @param device     updated RGBLight DTO
+     * @param device     updated Light DTO
      * @param apiVersion api version specified in route
-     * @param label label of the RGBLight to be created
-     * @return RGBLight updated or added to the house
+     * @param label label of the Light to be created
+     * @return Light updated or added to the house
      */
-    @PutMapping(RGB_LIGHT_ID_ROUTE)
+    @PutMapping(LIGHT_ID_ROUTE)
     public ResponseEntity<DeviceDTO> putLed(
-            @Valid @RequestBody RGBLightDTO device,
+            @Valid @RequestBody LightDTO device,
             @PathVariable @NotNull String label,
             @PathVariable String apiVersion
     ) {
@@ -87,19 +87,19 @@ public class RGBLightController extends FinalDeviceHandling {
 
 
     /**
-     * Deletes the RGBLight
+     * Deletes the Light
      *
-     * @param label      label of the RGBLight to be deleted
+     * @param label      label of the Light to be deleted
      * @param apiVersion api version specified in route
-     * @return "OK" if RGBLight exists in the house and was deleted
+     * @return "OK" if Light exists in the house and was deleted
      */
-    @DeleteMapping(RGB_LIGHT_ID_ROUTE)
-    public ResponseEntity<HttpStatus> deleteRGBLight(
+    @DeleteMapping(LIGHT_ID_ROUTE)
+    public ResponseEntity<HttpStatus> deleteLight(
             @PathVariable @NotNull String label,
             @PathVariable String apiVersion
     ) {
         if (apiVersion.equals(APIVersions.V0_1)) {
-            handleDelete(label, RGBLight.class);
+            handleDelete(label, Light.class);
 
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }

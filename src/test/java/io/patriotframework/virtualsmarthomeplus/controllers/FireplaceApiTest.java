@@ -51,7 +51,7 @@ public class FireplaceApiTest {
     @Test
     public void shouldFetchDevice() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
-        FireplaceDTO FireplaceDTO = (FireplaceDTO) dtoMapper.map(house.getDevice("fireplace1"));
+        FireplaceDTO fireplaceDTO = (FireplaceDTO) dtoMapper.map(house.getDevice("fireplace1"));
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v0.1/house/device/fireplace/fireplace1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -61,9 +61,9 @@ public class FireplaceApiTest {
         String responseBody = result.getResponse().getContentAsString();
         FireplaceDTO responseDTO = objectMapper.readValue(responseBody, FireplaceDTO.class);
 
-        assertEquals(EXTINGUISHED, FireplaceDTO.getStatus());
+        assertEquals(EXTINGUISHED, responseDTO.getStatus());
 
-        assertEquals(FireplaceDTO, responseDTO);
+        assertEquals(fireplaceDTO, responseDTO);
     }
 
     @Test

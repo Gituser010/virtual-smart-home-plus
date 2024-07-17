@@ -3,6 +3,8 @@ package io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.patriot_framework.generator.device.impl.basicActuators.BasicActuator;
+import io.patriot_framework.generator.device.passive.actuators.stateMachine.StateMachine;
 import io.patriotframework.virtualsmarthomeplus.DTOs.DeviceDTO;
 import io.patriotframework.virtualsmarthomeplus.DTOs.FireplaceDTO;
 import io.patriotframework.virtualsmarthomeplus.house.House;
@@ -19,7 +21,8 @@ public class Fireplace extends Device {
     public static final String ON_FIRE = "on_fire";
     public static final String EXTINGUISHED = "extinguished";
     private static final Logger LOGGER = LoggerFactory.getLogger(House.class);
-    private Boolean onFire = false;
+
+    private final BasicActuator fireplace = new BasicActuator("fireplace");
 
     /**
      * Creates new fireplace with given label.
@@ -29,6 +32,13 @@ public class Fireplace extends Device {
     @JsonCreator
     public Fireplace(String label) {
         super(label);
+        fireplace.setStateMachine(new StateMachine.Builder()
+                .from(ON_FIRE)
+                    .to(EXTINGUISHED, "extinguish")
+                .from(EXTINGUISHED)
+                    .to(ON_FIRE, "fire_up")
+                .build()
+        );
     }
 
     /**
@@ -41,27 +51,27 @@ public class Fireplace extends Device {
      */
     public Fireplace(Fireplace origFireplace, String newLabel) {
         super(origFireplace, newLabel);
-        onFire = origFireplace.onFire;
+        fireplace.setStateMachine(new StateMachine.Builder()
+                .from(ON_FIRE)
+                .to(EXTINGUISHED, "extinguish")
+                .from(EXTINGUISHED)
+                .to(ON_FIRE, "fire_up")
+                .build()
+        );
     }
 
     /**
      * Fires up the fireplace.
      */
     public void fireUp() {
-        if (!onFire) {
-            onFire = true;
-            LOGGER.debug(String.format("Fireplace %s fired up", getLabel()));
-        }
+        fireplace.controlSignal("fire_up");
     }
 
     /**
      * Extinguishes the fireplace.
      */
     public void extinguish() {
-        if (onFire) {
-            onFire = false;
-            LOGGER.debug(String.format("Fireplace %s extinguished", getLabel()));
-        }
+        fireplace.controlSignal("extinguish");
     }
 
     /**
@@ -71,7 +81,12 @@ public class Fireplace extends Device {
      */
     @JsonIgnore
     public String getStatus() {
-        return onFire ? ON_FIRE : EXTINGUISHED;
+        try {
+            return fireplace.requestData().get(0).get(String.class);
+        } catch (NullPointerException e) {
+            LOGGER.error("Fireplace status is null");
+            return null;
+        }
     }
 
     /**
@@ -99,7 +114,7 @@ public class Fireplace extends Device {
         if (isEnabled() != typedFireplace.isEnabled()) {
             return false;
         }
-        return typedFireplace.onFire == onFire;
+        return  ((Fireplace) fireplace).getStatus().equals(getStatus());
     }
     /**
      * Updates the fireplace object with the values from provided DTO.
@@ -110,9 +125,11 @@ public class Fireplace extends Device {
         final FireplaceDTO fireplaceDTO = (FireplaceDTO) deviceDTO;
         if (fireplaceDTO.getStatus() != null) {
             if (fireplaceDTO.getStatus().equals(EXTINGUISHED)) {
-                this.extinguish();
+                if(fireplace.requestData().get(0).get(String.class).equals(ON_FIRE))
+                    this.extinguish();
             } else if (fireplaceDTO.getStatus().equals(ON_FIRE)) {
-                this.fireUp();
+                if(fireplace.requestData().get(0).get(String.class).equals(EXTINGUISHED))
+                    this.fireUp();
             }
         }
         super.update(fireplaceDTO);

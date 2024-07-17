@@ -1,9 +1,6 @@
 package io.patriotframework.virtualsmarthomeplus.house.devices;
 
-import io.patriotframework.virtualsmarthomeplus.DTOs.RGBLightDTO;
-import io.patriotframework.virtualsmarthomeplus.Mapper.DTOMapper;
 import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.Door;
-import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.RGBLight;
 import org.junit.jupiter.api.Test;
 
 import static io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.Door.CLOSED;
@@ -28,6 +25,7 @@ public class DoorTest {
     @Test
     public void OpenCloseTest() {
         door1.setEnabled(true);
+        door1.close();
         assertEquals(door1.getStatus(),CLOSED);
         door1.open();
         assertEquals(door1.getStatus(),OPENED);
@@ -43,9 +41,10 @@ public class DoorTest {
     }
 
     @Test
-    public void createWithSameAttributes() {
+    public void createWithSameAttributes() throws InterruptedException {
         door1.setEnabled(true);
         Door door3 = door1.createWithSameAttributes("rgb3");
+        Thread.sleep(100);
         assertEquals(door3.isEnabled(), door1.isEnabled());
         assertTrue(door3.hasSameAttributes(door1));
     }
@@ -58,9 +57,9 @@ public class DoorTest {
         assertThrows(IllegalArgumentException.class, () -> door1.hasSameAttributes(null));
 
         assertTrue(door1.hasSameAttributes(door2));
-        door1.open();
-        assertFalse(door1.hasSameAttributes(door2));
         door1.close();
+        assertFalse(door1.hasSameAttributes(door2));
+        door1.open();
         assertTrue(door1.hasSameAttributes(door2));
     }
 }

@@ -2,10 +2,11 @@ package io.patriotframework.virtualsmarthomeplus.house;
 
 import io.patriotframework.virtualsmarthomeplus.DTOS.MockDTO;
 import io.patriotframework.virtualsmarthomeplus.DTOs.*;
+import io.patriotframework.virtualsmarthomeplus.controllers.LightApiTest;
 import io.patriotframework.virtualsmarthomeplus.factory.DeviceFactory;
 import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.Door;
 import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.Fireplace;
-import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.RGBLight;
+import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.Light;
 import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.Thermometer;
 import org.junit.jupiter.api.Test;
 
@@ -21,10 +22,10 @@ public class DeviceFactoryTest {
     }
 
     @Test
-    public void createRGBDevice() {
-        RGBLightDTO rgbLightDTO = new RGBLightDTO();
-        rgbLightDTO.setLabel("rgb1");
-        assertEquals(deviceFactory.createDevice(rgbLightDTO).getClass(), RGBLight.class);
+    public void createLightDevice() {
+        LightDTO lightDTO = new LightDTO();
+        lightDTO.setLabel("rgb1");
+        assertEquals(deviceFactory.createDevice(lightDTO).getClass(), Light.class);
     }
 
     @Test
@@ -57,7 +58,7 @@ public class DeviceFactoryTest {
 
     @Test
     public void labelNullInDeviceDTO() {
-        RGBLightDTO mockDTO = new RGBLightDTO();
+        LightDTO mockDTO = new LightDTO();
 
         assertThrows(IllegalArgumentException.class, () -> deviceFactory.createDevice(mockDTO));
     }

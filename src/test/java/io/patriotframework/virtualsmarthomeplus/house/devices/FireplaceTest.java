@@ -29,9 +29,12 @@ public class FireplaceTest {
     @Test
     public void fireUpExtinguishTest() {
         fireplace1.setEnabled(true);
+        fireplace1.extinguish();
         assertEquals(fireplace1.getStatus(),EXTINGUISHED);
+        assertEquals(fireplace2.getStatus(),ON_FIRE);
         fireplace1.fireUp();
         assertEquals(fireplace1.getStatus(),ON_FIRE);
+        assertEquals(fireplace2.getStatus(),ON_FIRE);
         fireplace1.extinguish();
         assertEquals(fireplace1.getStatus(),EXTINGUISHED);
         fireplace1.fireUp();
@@ -44,10 +47,13 @@ public class FireplaceTest {
     }
 
     @Test
-    public void createWithSameAttributes() {
+    public void createWithSameAttributes() throws InterruptedException {
         fireplace1.setEnabled(true);
-        Fireplace fireplace3 = fireplace1.createWithSameAttributes("rgb3");
+        Fireplace fireplace3 = fireplace1.createWithSameAttributes("fireplace3");
+        Thread.sleep(1000);
         assertEquals(fireplace3.isEnabled(), fireplace1.isEnabled());
+        fireplace3.fireUp();
+        assertEquals(fireplace3.getStatus(), fireplace1.getStatus());
         assertTrue(fireplace3.hasSameAttributes(fireplace1));
     }
 
@@ -59,9 +65,9 @@ public class FireplaceTest {
         assertThrows(IllegalArgumentException.class, () -> fireplace1.hasSameAttributes(null));
 
         assertTrue(fireplace1.hasSameAttributes(fireplace2));
-        fireplace1.fireUp();
-        assertFalse(fireplace1.hasSameAttributes(fireplace2));
         fireplace1.extinguish();
+        assertFalse(fireplace1.hasSameAttributes(fireplace2));
+        fireplace1.fireUp();
         assertTrue(fireplace1.hasSameAttributes(fireplace2));
     }
 }
