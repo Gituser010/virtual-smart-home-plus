@@ -44,10 +44,11 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler {
 
         return new ResponseEntity<>(apiError, status);
     }
+
     /**
      * Returns proper response entity on NoSuchElementException.
      *
-     * @param ex      exception which caused this method call
+     * @param ex exception which caused this method call
      * @return {@link io.patriotframework.virtualsmarthomeplus.APIErrors.APIError APIError} instance whith list of
      * {@link io.patriotframework.virtualsmarthomeplus.APIErrors.NotValidSubError NotValidSubError} instances, which
      * informs about specific validity violations
@@ -55,13 +56,14 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = NoSuchElementException.class)
     protected ResponseEntity<Object> handleNotFound(NoSuchElementException ex) {
         final String message = "Device not found";
-        final APIError apiError = new APIError(HttpStatus.NOT_FOUND,message);
-        return new ResponseEntity<>(apiError,HttpStatus.NOT_FOUND);
+        final APIError apiError = new APIError(HttpStatus.NOT_FOUND, message);
+        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
     }
+
     /**
      * Returns proper response entity on IllegalArgumentException.
      *
-     * @param ex      exception which caused this method call
+     * @param ex exception which caused this method call
      * @return {@link io.patriotframework.virtualsmarthomeplus.APIErrors.APIError APIError} instance whith list of
      * {@link io.patriotframework.virtualsmarthomeplus.APIErrors.NotValidSubError NotValidSubError} instances, which
      * informs about specific validity violations
@@ -69,13 +71,14 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = IllegalArgumentException.class)
     protected ResponseEntity<Object> handleWrongArgument(IllegalArgumentException ex) {
         final String message = "Wrong label";
-        final APIError apiError = new APIError(HttpStatus.BAD_REQUEST,message);
-        return new ResponseEntity<>(apiError,HttpStatus.BAD_REQUEST);
+        final APIError apiError = new APIError(HttpStatus.BAD_REQUEST, message);
+        return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
+
     /**
      * Returns proper response entity on KeyAlreadyExistException.
      *
-     * @param ex      exception which caused this method call
+     * @param ex exception which caused this method call
      * @return {@link io.patriotframework.virtualsmarthomeplus.APIErrors.APIError APIError} instance whith list of
      * {@link io.patriotframework.virtualsmarthomeplus.APIErrors.NotValidSubError NotValidSubError} instances, which
      * informs about specific validity violations
@@ -83,8 +86,8 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = KeyAlreadyExistsException.class)
     protected ResponseEntity<Object> handleExistingDevice(IllegalArgumentException ex) {
         final String message = "Device already exists";
-        final APIError apiError = new APIError(HttpStatus.CONFLICT,message);
-        return new ResponseEntity<>(apiError,HttpStatus.CONFLICT);
+        final APIError apiError = new APIError(HttpStatus.CONFLICT, message);
+        return new ResponseEntity<>(apiError, HttpStatus.CONFLICT);
     }
 
 

@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public abstract class Actuator extends Device {
     private static final Logger LOGGER = LoggerFactory.getLogger(House.class);
-    private boolean switchedOn = false;
 
     /**
      * Creates new Actuator.
@@ -28,7 +27,7 @@ public abstract class Actuator extends Device {
      * Creates new Actuator with the same values of the attributes as given Actuator except label.
      * Label of the new Actuator is given by parameter.
      *
-     * @param newLabel label creates identity of the thermometer and is compared in the equals method
+     * @param newLabel   label creates identity of the thermometer and is compared in the equals method
      * @param origDevice template for the new Actuator
      * @throws IllegalArgumentException if given label is null or blank
      */
@@ -36,33 +35,8 @@ public abstract class Actuator extends Device {
         super(origDevice, newLabel);
     }
 
-    /**
-     * Switches actuator ON
-     */
-    public void switchOn() {
-        if (!switchedOn) {
-            this.switchedOn = true;
-            LOGGER.debug(String.format("Actuator %s is switched on", getLabel()));
-        }
-    }
-
-    /**
-     * Switches actuator OF
-     */
-    public void switchOf() {
-        if (switchedOn) {
-            this.switchedOn = false;
-            LOGGER.debug(String.format("Actuator %s is switched on", getLabel()));
-        }
-    }
-
-    /**
-     * Gets status of actuator
-     *
-     * @return intensity of blue color as int
-     */
-    public boolean getSwitchedOn() {
-        return this.switchedOn;
+    public String getStatus() {
+        return device.requestData().get(0).get(String.class);
     }
 
     /**
@@ -72,14 +46,6 @@ public abstract class Actuator extends Device {
      */
     @Override
     public void update(DeviceDTO deviceDTO) {
-        final ActuatorDTO actuatorDTO = (ActuatorDTO) deviceDTO;
-        if (actuatorDTO.getSwitchedOn() != null) {
-            if (actuatorDTO.getSwitchedOn()) {
-                this.switchOn();
-            } else {
-                this.switchOf();
-            }
-        }
         super.update(deviceDTO);
     }
 }

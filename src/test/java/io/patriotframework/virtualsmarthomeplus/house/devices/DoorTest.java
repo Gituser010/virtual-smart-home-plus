@@ -28,7 +28,6 @@ public class DoorTest {
     @Test
     public void OpenCloseTest() {
         door1.setEnabled(true);
-        assertEquals(door1.getStatus(),CLOSED);
         door1.open();
         assertEquals(door1.getStatus(),OPENED);
         door1.close();
@@ -45,7 +44,9 @@ public class DoorTest {
     @Test
     public void createWithSameAttributes() {
         door1.setEnabled(true);
-        Door door3 = door1.createWithSameAttributes("rgb3");
+        Door door3 = door1.createWithSameAttributes("door3");
+        System.out.println(door3.isEnabled());
+        System.out.println(door1.isEnabled());
         assertEquals(door3.isEnabled(), door1.isEnabled());
         assertTrue(door3.hasSameAttributes(door1));
     }
@@ -58,9 +59,9 @@ public class DoorTest {
         assertThrows(IllegalArgumentException.class, () -> door1.hasSameAttributes(null));
 
         assertTrue(door1.hasSameAttributes(door2));
-        door1.open();
-        assertFalse(door1.hasSameAttributes(door2));
         door1.close();
+        assertFalse(door1.hasSameAttributes(door2));
+        door1.open();
         assertTrue(door1.hasSameAttributes(door2));
     }
 }

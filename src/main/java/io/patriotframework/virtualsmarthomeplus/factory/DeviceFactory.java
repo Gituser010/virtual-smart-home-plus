@@ -20,7 +20,7 @@ public class DeviceFactory {
      * @param device DTO of device to be created
      * @return devices of certain type
      */
-    public Device createDevice( DeviceDTO device) throws IllegalArgumentException {
+    public Device createDevice(DeviceDTO device) throws IllegalArgumentException {
         final String deviceType = device.getClass().getSimpleName();
         return switch (deviceType) {
             case "RGBLightDTO" -> new RGBLight(device.getLabel());

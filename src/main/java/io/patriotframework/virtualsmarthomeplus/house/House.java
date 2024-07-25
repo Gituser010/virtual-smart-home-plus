@@ -83,7 +83,7 @@ public class House {
      * Provide device of certain type which is stored in house.
      *
      * @param deviceType type of requested device
-     * @param label label of requested device
+     * @param label      label of requested device
      * @return device of requested type
      */
     public Device getDeviceOfType(Class<? extends Device> deviceType, String label) throws IllegalArgumentException {

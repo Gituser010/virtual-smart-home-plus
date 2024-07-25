@@ -20,6 +20,8 @@ import static io.patriotframework.virtualsmarthomeplus.house.devices.finalDevice
 import static io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.Door.OPENED;
 import static io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.Fireplace.EXTINGUISHED;
 import static io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.Fireplace.ON_FIRE;
+import static io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.RGBLight.OFF;
+import static io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.RGBLight.ON;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -65,15 +67,15 @@ public class DTOMapperTest {
         RGBLightDTO rgbLightDTO = new RGBLightDTO();
         rgbLightDTO.setLabel("rgb1");
         rgbLightDTO.setEnabled(true);
-        rgbLightDTO.setSwitchedOn(true);
+        rgbLightDTO.setStatus(ON);
         rgbLightDTO.setRed(20);
         rgbLightDTO.setGreen(21);
         rgbLightDTO.setBlue(22);
 
         assertEquals(dtoMapper.map(rgbLight),rgbLightDTO);
 
-        rgbLight.switchOf();
-        rgbLightDTO.setSwitchedOn(false);
+        rgbLight.switchOff();
+        rgbLightDTO.setStatus(OFF);
 
         assertEquals(dtoMapper.map(rgbLight),rgbLightDTO);
     }
@@ -82,13 +84,12 @@ public class DTOMapperTest {
     public void fireplaceToFireplaceDTO() {
         Fireplace fireplace = new Fireplace("fireplace1");
         fireplace.setEnabled(true);
-        fireplace.fireUp();
 
         FireplaceDTO fireplaceDTO = new FireplaceDTO();
         fireplaceDTO.setLabel("fireplace1");
         fireplaceDTO.setStatus(ON_FIRE);
         fireplaceDTO.setEnabled(true);
-
+        fireplace.fireUp();
         assertEquals(dtoMapper.map(fireplace),fireplaceDTO);
 
         fireplace.extinguish();
@@ -98,10 +99,9 @@ public class DTOMapperTest {
     }
 
     @Test
-    public void doorToDoorDTO() {
+    public void doorToDoorDTO() throws InterruptedException {
         Door door = new Door("door1");
         door.setEnabled(true);
-        door.open();
 
         DoorDTO doorDTO = new DoorDTO();
         doorDTO.setLabel("door1");

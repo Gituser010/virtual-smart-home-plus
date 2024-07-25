@@ -29,7 +29,7 @@ public class ThermometerTest {
     }
 
     @Test
-    public void getTemperature() {
+    public void getTemperature() throws InterruptedException {
         float temperature = thermometer1.getTemperature();
         assertTrue(temperature < 40 && temperature > 0);
     }

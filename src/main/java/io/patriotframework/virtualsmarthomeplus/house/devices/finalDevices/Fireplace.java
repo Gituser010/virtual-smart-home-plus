@@ -2,10 +2,12 @@ package io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.patriot_framework.generator.device.impl.basicActuators.BasicActuator;
+import io.patriot_framework.generator.device.passive.actuators.stateMachine.StateMachine;
 import io.patriotframework.virtualsmarthomeplus.DTOs.DeviceDTO;
 import io.patriotframework.virtualsmarthomeplus.DTOs.FireplaceDTO;
 import io.patriotframework.virtualsmarthomeplus.house.House;
+import io.patriotframework.virtualsmarthomeplus.house.devices.Actuator;
 import io.patriotframework.virtualsmarthomeplus.house.devices.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,12 +16,11 @@ import org.slf4j.LoggerFactory;
  * Representation of fireplace device.
  */
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-public class Fireplace extends Device {
+public class Fireplace extends Actuator {
 
-    public static final String ON_FIRE = "on_fire";
-    public static final String EXTINGUISHED = "extinguished";
+    public static final String ON_FIRE = "On_fire";
+    public static final String EXTINGUISHED = "Extinguished";
     private static final Logger LOGGER = LoggerFactory.getLogger(House.class);
-    private Boolean onFire = false;
 
     /**
      * Creates new fireplace with given label.
@@ -29,6 +30,15 @@ public class Fireplace extends Device {
     @JsonCreator
     public Fireplace(String label) {
         super(label);
+        device = new BasicActuator(label);
+        ((BasicActuator) device).setStateMachine(
+                new StateMachine.Builder()
+                        .from(ON_FIRE)
+                        .to(EXTINGUISHED, "Extinguish")
+                        .from(EXTINGUISHED)
+                        .to(ON_FIRE, "FireUp")
+                        .build()
+        );
     }
 
     /**
@@ -41,15 +51,25 @@ public class Fireplace extends Device {
      */
     public Fireplace(Fireplace origFireplace, String newLabel) {
         super(origFireplace, newLabel);
-        onFire = origFireplace.onFire;
+        device = new BasicActuator(newLabel);
+        ((BasicActuator) device).setStateMachine(
+                new StateMachine.Builder()
+                        .from(ON_FIRE)
+                        .to(EXTINGUISHED, "Extinguish")
+                        .from(EXTINGUISHED)
+                        .to(ON_FIRE, "FireUp")
+                        .build()
+        );
+        device.setEnabled(origFireplace.isEnabled());
+
     }
 
     /**
      * Fires up the fireplace.
      */
     public void fireUp() {
-        if (!onFire) {
-            onFire = true;
+        if (getStatus().equals(EXTINGUISHED)) {
+            ((BasicActuator) device).controlSignal("FireUp");
             LOGGER.debug(String.format("Fireplace %s fired up", getLabel()));
         }
     }
@@ -58,20 +78,10 @@ public class Fireplace extends Device {
      * Extinguishes the fireplace.
      */
     public void extinguish() {
-        if (onFire) {
-            onFire = false;
+        if (getStatus().equals(ON_FIRE)) {
+            ((BasicActuator) device).controlSignal("Extinguish");
             LOGGER.debug(String.format("Fireplace %s extinguished", getLabel()));
         }
-    }
-
-    /**
-     * Returns the info about the fireplace.
-     *
-     * @return {@link #ON_FIRE} if the fireplace is lit, {@link #EXTINGUISHED} otherwise
-     */
-    @JsonIgnore
-    public String getStatus() {
-        return onFire ? ON_FIRE : EXTINGUISHED;
     }
 
     /**
@@ -96,11 +106,9 @@ public class Fireplace extends Device {
 
         final Fireplace typedFireplace = (Fireplace) fireplace;
 
-        if (isEnabled() != typedFireplace.isEnabled()) {
-            return false;
-        }
-        return typedFireplace.onFire == onFire;
+        return isEnabled() == typedFireplace.isEnabled();
     }
+
     /**
      * Updates the fireplace object with the values from provided DTO.
      *

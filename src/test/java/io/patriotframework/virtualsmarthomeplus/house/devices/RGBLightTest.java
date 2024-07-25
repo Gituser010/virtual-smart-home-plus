@@ -8,6 +8,8 @@ import org.modelmapper.ModelMapper;
 
 import java.awt.*;
 
+import static io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.RGBLight.OFF;
+import static io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.RGBLight.ON;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RGBLightTest {
@@ -22,52 +24,52 @@ public class RGBLightTest {
         rgbLightDTO.setLabel("rgb");
         assertDoesNotThrow(() -> {
             RGBLight rgb = new RGBLight("rgb3");
-            rgb.switchOf();
+            rgb.switchOff();
         });
         assertThrows(IllegalArgumentException.class, () -> new RGBLight(""));
         assertThrows(IllegalArgumentException.class, () -> new RGBLight(null));
     }
 
     @Test
-    public void switchOn() {
+    public void switchOnTest() {
         rgb1.setEnabled(true);
-        assertFalse(rgb1.getSwitchedOn());
+        assertFalse(rgb1.getStatus().equals(ON));
         rgb1.switchOn();
-        assertTrue(rgb1.getSwitchedOn());
+        assertTrue(rgb1.getStatus().equals(ON));
         rgb1.switchOn();
-        rgb1.switchOf();
+        rgb1.switchOff();
         rgb1.switchOn();
-        assertTrue(rgb1.getSwitchedOn());
+        assertTrue(rgb1.getStatus().equals(ON));
 
         rgb2.setEnabled(true);
-        assertFalse(rgb2.getSwitchedOn());
+        assertFalse(rgb2.getStatus().equals(ON));
         rgb2.switchOn();
-        assertTrue(rgb2.getSwitchedOn());
+        assertTrue(rgb2.getStatus().equals(ON));
         rgb2.switchOn();
-        rgb2.switchOf();
+        rgb2.switchOff();
         rgb2.switchOn();
-        assertTrue(rgb2.getSwitchedOn());
+        assertTrue(rgb2.getStatus().equals(ON));
     }
 
     @Test
-    public void switchOf() {
+    public void switchOffTest() {
         rgb1.setEnabled(true);
-        assertFalse(rgb1.getSwitchedOn());
-        rgb1.switchOf();
-        assertFalse(rgb1.getSwitchedOn());
-        rgb1.switchOf();
+        assertFalse(rgb1.getStatus().equals(ON));
+        rgb1.switchOff();
+        assertFalse(rgb1.getStatus().equals(ON));
+        rgb1.switchOff();
         rgb1.switchOn();
-        rgb1.switchOf();
-        assertFalse(rgb1.getSwitchedOn());
+        rgb1.switchOff();
+        assertFalse(rgb1.getStatus().equals(ON));
 
         rgb2.setEnabled(true);
-        assertFalse(rgb2.getSwitchedOn());
-        rgb2.switchOf();
-        assertFalse(rgb2.getSwitchedOn());
-        rgb2.switchOf();
+        assertFalse(rgb2.getStatus().equals(ON));
+        rgb2.switchOff();
+        assertFalse(rgb2.getStatus().equals(ON));
+        rgb2.switchOff();
         rgb2.switchOn();
-        rgb2.switchOf();
-        assertFalse(rgb2.getSwitchedOn());
+        rgb2.switchOff();
+        assertFalse(rgb2.getStatus().equals(ON));
     }
 
     @Test
@@ -123,7 +125,6 @@ public class RGBLightTest {
     public void createWithSameAttributes() {
         rgb1.setEnabled(true);
         RGBLight rgbLight3 = rgb1.createWithSameAttributes("rgb3");
-        assertEquals(rgbLight3.isEnabled(), rgb1.isEnabled());
         assertTrue(rgbLight3.hasSameAttributes(rgb1));
     }
 

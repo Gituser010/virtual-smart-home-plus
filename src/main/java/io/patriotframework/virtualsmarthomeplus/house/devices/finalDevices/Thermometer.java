@@ -17,7 +17,6 @@ public class Thermometer extends Sensor {
     //public static final String KELVIN = "K";     private  Float temperature;
     public static final String DEFAULT_UNIT = CELSIUS;
     private static final Logger LOGGER = LoggerFactory.getLogger(House.class);
-    private final io.patriot_framework.generator.device.Device device;
     private String unit;
 
     /**
@@ -33,13 +32,14 @@ public class Thermometer extends Sensor {
     /**
      * Creates new thermometer with given label and given unit.
      *
-     * @param unit measuring unit
+     * @param unit  measuring unit
      * @param label label of the new thermometer
      * @throws IllegalArgumentException if given label is null or blank
      */
     @JsonCreator
     public Thermometer(String label, String unit) {
         super(label);
+        System.out.println("Thermometer created");
         device = new io.patriot_framework.generator.device.impl.basicSensors.Thermometer(
                 getLabel(),
                 new NormalDistVariateDataFeed(25, 1)
@@ -80,8 +80,20 @@ public class Thermometer extends Sensor {
      *
      * @return temperature value
      */
-    public Float getTemperature() {
-        return device.requestData().get(0).get(Double.class).floatValue();
+    public Float getTemperature() throws InterruptedException {
+        device.setEnabled(false);
+        Float temperature = device.requestData().get(0).get(Double.class).floatValue();
+        device.setEnabled(true);
+        return temperature;
+    }
+
+    /**
+     * Method gets type of measuring unit
+     *
+     * @return measuring unit
+     */
+    public String getUnit() {
+        return unit;
     }
 
     /**
@@ -92,15 +104,6 @@ public class Thermometer extends Sensor {
     public void setUnit(String unit) {
         Thermometer.this.unit = unit;
         LOGGER.debug(String.format("Measuring unit changed to %s", unit));
-    }
-
-    /**
-     * Method gets type of measuring unit
-     *
-     * @return measuring unit
-     */
-    public String getUnit() {
-        return unit;
     }
 
     /**
@@ -130,6 +133,7 @@ public class Thermometer extends Sensor {
         }
         return typedThermometer.unit.equals(unit);
     }
+
     /**
      * Updates the thermometer object with the values from provided DTO.
      *

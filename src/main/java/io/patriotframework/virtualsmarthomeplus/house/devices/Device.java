@@ -2,6 +2,7 @@ package io.patriotframework.virtualsmarthomeplus.house.devices;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import io.patriot_framework.generator.device.AbstractDevice;
 import io.patriotframework.virtualsmarthomeplus.DTOs.DeviceDTO;
 import io.patriotframework.virtualsmarthomeplus.house.House;
 import org.slf4j.Logger;
@@ -16,7 +17,11 @@ import java.util.Objects;
 public abstract class Device implements Comparable<Device> {
     private static final Logger LOGGER = LoggerFactory.getLogger(House.class);
     private final String label;
-    private Boolean enabled = false;
+
+    /**
+     * Device object that represents simulated device.
+     */
+    protected AbstractDevice device;
 
     /**
      * Creates new device with given label.
@@ -55,7 +60,6 @@ public abstract class Device implements Comparable<Device> {
             throw new IllegalArgumentException("Parameter 'label' can't blank");
         }
         this.label = newLabel;
-        enabled = origDevice.enabled;
         LOGGER.debug(String.format("Device %s created", label));
     }
 
@@ -74,7 +78,7 @@ public abstract class Device implements Comparable<Device> {
      * @return if true, device will react to commands
      */
     public Boolean isEnabled() {
-        return enabled;
+        return device.isEnabled();
     }
 
     /**
@@ -83,12 +87,11 @@ public abstract class Device implements Comparable<Device> {
      * @param enabled if true, device will react to commands
      */
     public void setEnabled(Boolean enabled) {
-        if (enabled == null) return;
-        if (enabled != this.enabled) {
+        if (enabled != device.isEnabled()) {
             LOGGER.debug(String
-                    .format("Device %s changed it's property enabled from: %s to: %s", label, this.enabled, enabled));
+                    .format("Device %s changed it's property enabled from: %s to: %s", label, device.isEnabled(), enabled));
         }
-        this.enabled = enabled;
+        device.setEnabled(enabled);
     }
 
     /**
@@ -103,8 +106,8 @@ public abstract class Device implements Comparable<Device> {
      * Method responsible for check whether two Devices has the same values of attributes
      *
      * @param device device to which this object will be compared
-     * @throws IllegalArgumentException if parameter device is null
      * @return return true if objects have same attributes and false otherwise
+     * @throws IllegalArgumentException if parameter device is null
      */
     public abstract boolean hasSameAttributes(Device device) throws IllegalArgumentException;
 

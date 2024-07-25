@@ -7,7 +7,6 @@ import io.patriotframework.virtualsmarthomeplus.Mapper.DTOMapper;
 import io.patriotframework.virtualsmarthomeplus.VirtualSmartHomePlusApplication;
 import io.patriotframework.virtualsmarthomeplus.house.House;
 import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.Thermometer;
-import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.Thermometer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -55,6 +54,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         @Test
         public void shouldFetchDevice() throws Exception {
             ObjectMapper objectMapper = new ObjectMapper();
+            house.getDevice("thermometer1");
             ThermometerDTO ThermometerDTO = (ThermometerDTO) dtoMapper.map(house.getDevice("thermometer1"));
             MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v0.1/house/device/thermometer/thermometer1")
                             .accept(MediaType.APPLICATION_JSON))

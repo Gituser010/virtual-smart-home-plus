@@ -2,6 +2,8 @@ package io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import io.patriot_framework.generator.device.passive.actuators.stateMachine.StateMachine;
+import io.patriotframework.virtualsmarthomeplus.Actuators.RGBActuator;
 import io.patriotframework.virtualsmarthomeplus.DTOs.DeviceDTO;
 import io.patriotframework.virtualsmarthomeplus.DTOs.RGBLightDTO;
 import io.patriotframework.virtualsmarthomeplus.house.House;
@@ -10,16 +12,15 @@ import io.patriotframework.virtualsmarthomeplus.house.devices.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.Color;
+import java.awt.*;
 
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class RGBLight extends Actuator {
 
+    public static final String OFF = "Off";
+    public static final String ON = "On";
     private static final Logger LOGGER = LoggerFactory.getLogger(House.class);
-    private int red;
-    private int green;
-    private int blue;
 
     /**
      * Creates new RGBLight with given label and sets intensity of RGB light to zero.
@@ -30,7 +31,16 @@ public class RGBLight extends Actuator {
     @JsonCreator
     public RGBLight(String label) {
         super(label);
+        device = new RGBActuator(label);
         setRGB(0, 0, 0);
+        ((RGBActuator) device).setStateMachine(
+                new StateMachine.Builder()
+                        .from("Off")
+                        .to("On", "TurnOn")
+                        .from("On")
+                        .to("Off", "TurnOff")
+                        .build()
+        );
     }
 
     /**
@@ -45,6 +55,15 @@ public class RGBLight extends Actuator {
      */
     public RGBLight(String label, int red, int green, int blue) {
         super(label);
+        device = new RGBActuator(label);
+        ((RGBActuator) device).setStateMachine(
+                new StateMachine.Builder()
+                        .from(OFF)
+                        .to(ON, "TurnOn")
+                        .from(ON)
+                        .to(OFF, "TurnOff")
+                        .build()
+        );
         setRGB(red, green, blue);
     }
 
@@ -58,6 +77,15 @@ public class RGBLight extends Actuator {
      */
     public RGBLight(RGBLight origRGBLight, String newLabel) {
         super(origRGBLight, newLabel);
+        device = new RGBActuator(newLabel);
+        ((RGBActuator) device).setStateMachine(
+                new StateMachine.Builder()
+                        .from("Off")
+                        .to("On", "TurnOn")
+                        .from("On")
+                        .to("Off", "TurnOff")
+                        .build()
+        );
         setRGB(0, 0, 0);
     }
 
@@ -75,6 +103,30 @@ public class RGBLight extends Actuator {
     public RGBLight(RGBLight origRGBLight, String newLabel, int red, int green, int blue) {
         super(origRGBLight, newLabel);
         setRGB(red, green, blue);
+        device = new RGBActuator(newLabel);
+        device.setEnabled(origRGBLight.isEnabled());
+        ((RGBActuator) device).setStateMachine(
+                new StateMachine.Builder()
+                        .from("Off")
+                        .to("On", "TurnOn")
+                        .from("On")
+                        .to("Off", "TurnOff")
+                        .build()
+        );
+    }
+
+    /**
+     * Switches on the RGB light.
+     */
+    public void switchOn() {
+        ((RGBActuator) device).controlSignal("TurnOn");
+    }
+
+    /**
+     * Switches off the RGB light.
+     */
+    public void switchOff() {
+        ((RGBActuator) device).controlSignal("TurnOff");
     }
 
     /**
@@ -96,7 +148,7 @@ public class RGBLight extends Actuator {
      * @return color of RGB light as Color
      */
     public Color getRGB() {
-        return new Color(this.red, this.green, this.blue);
+        return new Color(getRed(), getGreen(), getBlue());
     }
 
     /**
@@ -105,7 +157,7 @@ public class RGBLight extends Actuator {
      * @return intensity of red color as int
      */
     public int getRed() {
-        return this.red;
+        return device.requestData().get(1).get(Integer.class);
     }
 
     /**
@@ -114,19 +166,7 @@ public class RGBLight extends Actuator {
      * @param red new value of red
      */
     public void setRed(int red) {
-        if (red < 0) {
-            LOGGER.debug(String.format("Red value %d out of bound", red));
-            this.red = 0;
-            LOGGER.debug(String.format("Red value changed to %d", this.red));
-            return;
-        }
-        if (red > 255) {
-            LOGGER.debug(String.format("Red value %d out of bound", red));
-            this.red = 255;
-            LOGGER.debug(String.format("Red value changed to %d", this.red));
-            return;
-        }
-        this.red = red;
+        ((RGBActuator) device).setRed(red);
         LOGGER.debug(String.format("Red value changed to %d", red));
     }
 
@@ -136,7 +176,7 @@ public class RGBLight extends Actuator {
      * @return intensity of green color as int
      */
     public int getGreen() {
-        return this.green;
+        return device.requestData().get(2).get(Integer.class);
     }
 
     /**
@@ -145,19 +185,7 @@ public class RGBLight extends Actuator {
      * @param green new value of green
      */
     public void setGreen(int green) {
-        if (green < 0) {
-            LOGGER.debug(String.format("Green value %d out of bound", green));
-            this.green = 0;
-            LOGGER.debug(String.format("Green value changed to %d", this.green));
-            return;
-        }
-        if (green > 255) {
-            LOGGER.debug(String.format("Green value %d out of bound", green));
-            this.green = 255;
-            LOGGER.debug(String.format("Green value changed to %d", this.green));
-            return;
-        }
-        this.green = green;
+        ((RGBActuator) device).setGreen(green);
         LOGGER.debug(String.format("Green value changed to %d", green));
     }
 
@@ -167,7 +195,7 @@ public class RGBLight extends Actuator {
      * @return intensity of blue color as int
      */
     public int getBlue() {
-        return this.blue;
+        return device.requestData().get(3).get(Integer.class);
     }
 
     /**
@@ -176,19 +204,8 @@ public class RGBLight extends Actuator {
      * @param blue new value of blue
      */
     public void setBlue(int blue) {
-        if (blue < 0) {
-            LOGGER.debug(String.format("Blue value %d out of bound", blue));
-            this.blue = 0;
-            LOGGER.debug(String.format("Blue value changed to %d", this.blue));
-            return;
-        }
-        if (blue > 255) {
-            LOGGER.debug(String.format("Blue value %d out of bound", blue));
-            this.blue = 255;
-            LOGGER.debug(String.format("Blue value changed to %d", this.blue));
-            return;
-        }
-        this.blue = blue;
+        ((RGBActuator) device).setBlue(blue);
+
         LOGGER.debug(String.format("Blue value changed to %d", blue));
     }
 
@@ -214,9 +231,6 @@ public class RGBLight extends Actuator {
 
         final RGBLight typedRGB = (RGBLight) rgbLight;
 
-        if (this.isEnabled() != typedRGB.isEnabled()) {
-            return false;
-        }
 
         return typedRGB.getRGB().equals(this.getRGB());
     }

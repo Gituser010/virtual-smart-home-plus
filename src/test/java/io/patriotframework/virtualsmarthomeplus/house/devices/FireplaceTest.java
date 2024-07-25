@@ -29,6 +29,7 @@ public class FireplaceTest {
     @Test
     public void fireUpExtinguishTest() {
         fireplace1.setEnabled(true);
+        fireplace1.extinguish();
         assertEquals(fireplace1.getStatus(),EXTINGUISHED);
         fireplace1.fireUp();
         assertEquals(fireplace1.getStatus(),ON_FIRE);
@@ -57,11 +58,11 @@ public class FireplaceTest {
         assertThrows(IllegalArgumentException.class, () -> fireplace1.hasSameAttributes(device1));
 
         assertThrows(IllegalArgumentException.class, () -> fireplace1.hasSameAttributes(null));
-
+        fireplace2.setEnabled(false);
         assertTrue(fireplace1.hasSameAttributes(fireplace2));
-        fireplace1.fireUp();
+        fireplace2.setEnabled(true);
         assertFalse(fireplace1.hasSameAttributes(fireplace2));
-        fireplace1.extinguish();
+        fireplace2.setEnabled(false);
         assertTrue(fireplace1.hasSameAttributes(fireplace2));
     }
 }

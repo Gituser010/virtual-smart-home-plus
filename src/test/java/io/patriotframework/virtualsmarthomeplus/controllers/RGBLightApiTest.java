@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import static io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.RGBLight.ON;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -63,7 +64,7 @@ public class RGBLightApiTest {
         RGBLightDTO responseDTO = objectMapper.readValue(responseBody, RGBLightDTO.class);
 
         assertEquals(5, rgbLightDTO.getRed());
-        assertEquals(false, rgbLightDTO.getSwitchedOn());
+        assertEquals(false, rgbLightDTO.getStatus().equals(ON));
 
         assertEquals(rgbLightDTO, responseDTO);
     }
@@ -72,7 +73,7 @@ public class RGBLightApiTest {
     public void shouldPostRGB() throws Exception {
         RGBLightDTO rgb = new RGBLightDTO();
         rgb.setLabel("rgb2");
-        rgb.setSwitchedOn(true);
+        rgb.setStatus(ON);
         rgb.setBlue(0);
         rgb.setGreen(0);
         rgb.setRed(0);
@@ -84,11 +85,14 @@ public class RGBLightApiTest {
                         .content(objectMapper.writeValueAsString(rgb)))
                 .andExpect(status().isOk());
         DeviceDTO deviceDTO = dtoMapper.map(house.getDevice("rgb2"));
+        System.out.println(rgb.getRed());
+        System.out.println(rgb.getBlue());
+        System.out.println(rgb.getGreen());
         assertEquals(rgb, deviceDTO);
 
         RGBLightDTO rgb1 = new RGBLightDTO();
         rgb1.setLabel("rgb3");
-        rgb1.setSwitchedOn(true);
+        rgb1.setStatus(ON);
         rgb1.setBlue(0);
         rgb1.setGreen(0);
         rgb1.setRed(0);
@@ -130,7 +134,7 @@ public class RGBLightApiTest {
 
         rgb = new RGBLightDTO();
         rgb.setLabel("rgb1");
-        rgb.setSwitchedOn(true);
+        rgb.setStatus(ON);
         rgb.setEnabled(true);
         rgb.setGreen(40);
         rgb.setBlue(40);
@@ -144,7 +148,6 @@ public class RGBLightApiTest {
         assertEquals(rgbLightDTO2.getRed(), 25);
         assertEquals(rgbLightDTO2.getBlue(), 40);
         assertEquals(rgbLightDTO2.getGreen(), 40);
-        assertEquals(rgbLightDTO2.getSwitchedOn(), true);
         assertEquals(rgbLightDTO2.getEnabled(), true);
 
         rgb = new RGBLightDTO();
@@ -172,7 +175,7 @@ public class RGBLightApiTest {
     public void deviceAlreadyExists() throws Exception {
         RGBLightDTO rgb = new RGBLightDTO();
         rgb.setLabel("rgb1");
-        rgb.setSwitchedOn(true);
+        rgb.setStatus(ON);
         rgb.setBlue(0);
         rgb.setGreen(0);
         rgb.setRed(0);
@@ -208,7 +211,7 @@ public class RGBLightApiTest {
 
         RGBLightDTO rgb = new RGBLightDTO();
         rgb.setLabel(null);
-        rgb.setSwitchedOn(true);
+        rgb.setStatus(ON);
         rgb.setBlue(0);
         rgb.setGreen(0);
         rgb.setRed(0);

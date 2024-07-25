@@ -91,7 +91,6 @@ public class FinalDeviceHandling {
         deviceToUpdate.update(device);
 
 
-
         return dtoMapper.map(deviceToUpdate);
     }
 

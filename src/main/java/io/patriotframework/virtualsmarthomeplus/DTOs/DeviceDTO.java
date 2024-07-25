@@ -37,8 +37,7 @@ public class DeviceDTO {
         if (this == o) return true;
         if (!(o instanceof final DeviceDTO deviceDTO)) return false;
         return Objects.equals(getLabel(), deviceDTO.getLabel())
-                && Objects.equals(getDeviceType(), deviceDTO.getDeviceType())
-                && Objects.equals(getEnabled(), deviceDTO.getEnabled());
+                && Objects.equals(getDeviceType(), deviceDTO.getDeviceType());
     }
 
     @Override

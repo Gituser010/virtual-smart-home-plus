@@ -1,11 +1,6 @@
 package io.patriotframework.virtualsmarthomeplus.Mapper;
 
-import io.patriotframework.virtualsmarthomeplus.DTOs.ThermometerDTO;
-import io.patriotframework.virtualsmarthomeplus.DTOs.HouseDTO;
-import io.patriotframework.virtualsmarthomeplus.DTOs.RGBLightDTO;
-import io.patriotframework.virtualsmarthomeplus.DTOs.DeviceDTO;
-import io.patriotframework.virtualsmarthomeplus.DTOs.DoorDTO;
-import io.patriotframework.virtualsmarthomeplus.DTOs.FireplaceDTO;
+import io.patriotframework.virtualsmarthomeplus.DTOs.*;
 import io.patriotframework.virtualsmarthomeplus.house.House;
 import io.patriotframework.virtualsmarthomeplus.house.devices.Device;
 import io.patriotframework.virtualsmarthomeplus.house.devices.finalDevices.Door;
